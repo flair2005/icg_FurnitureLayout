@@ -1,0 +1,2 @@
+obj/test/living_chair2.obj
+living_chair2

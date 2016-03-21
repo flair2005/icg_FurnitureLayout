@@ -1,0 +1,2 @@
+obj/test/living_table_small.obj
+living_table

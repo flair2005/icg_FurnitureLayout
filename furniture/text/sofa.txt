@@ -1,0 +1,2 @@
+obj/test/sofa22.obj
+sofa

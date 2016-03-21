@@ -1,0 +1,6 @@
+x   y   z   x_dir   y_dir   z_dir   intensity   n  (‰üs)
+
+
+(x, y, z) ŒõŒ¹‚ÌˆÊ’u
+(x_dir, y_dir, z_dir) Œõ²‚ÌŒü‚«
+n cos‚Ìw”

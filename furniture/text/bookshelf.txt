@@ -1,0 +1,2 @@
+obj/test/bookshelf.obj
+bookshelf

@@ -1,0 +1,690 @@
+////------------------照度がちゃんとできてない(結果がいいけど)-----------------------------
+	//////左に強いバージョン
+	////spotLight.setAllParam(185.0, 80.0, 240.0, WHITE, 30000, 300, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(185.0, -80.0, 240.0, WHITE, 30000, 300, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(-185.0, 0.0, 240.0, WHITE, 30000, 300, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+
+	////右に強いバージョン
+	//spotLight.setAllParam(-185.0, 80.0, 240.0, WHITE, 30000, 300, 0.0, 0.0, -1.0, 0.0, 2);
+	//AspotLight.push_back(spotLight);
+	//spotLight.setAllParam(-185.0, -80.0, 240.0, WHITE, 30000, 300, 0.0, 0.0, -1.0, 0.0, 2);
+	//AspotLight.push_back(spotLight);
+	//spotLight.setAllParam(185.0, 0.0, 240.0, WHITE, 30000, 300, 0.0, 0.0, -1.0, 0.0, 2);
+	//AspotLight.push_back(spotLight);
+	//
+	////pointLight.setAllParam(-185.0, 80.0, 240.0, WHITE, 30000, 0.0, 300);
+	////ApointLight.push_back(pointLight);
+	////pointLight.setAllParam(-185.0, -80.0, 240.0, WHITE, 30000, 0.0, 300);
+	////ApointLight.push_back(pointLight);
+	////pointLight.setAllParam(185.0, 80.0, 240.0, WHITE, 30000, 0.0, 300);
+	////ApointLight.push_back(pointLight);
+
+	////ベース照明(60形)(PointLight)
+	//pointLight.setAllParam(280.0, 170.0, 240.0, WHITE, 18000, 0.0, 180);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(280.0, -170.0, 240.0, WHITE, 18000, 0.0, 180);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(-280.0, 170.0, 240.0, WHITE, 18000, 0.0, 180);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(-280.0, -170.0, 240.0, WHITE, 18000, 0.0, 180);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(0.0, 0.0, 240.0, WHITE, 18000, 0.0, 180);
+	//ApointLight.push_back(pointLight);
+	////--------------------------------------------------------------------------------------
+
+//コメント保存用
+//float pLightFlux_ij(Tvector3<float>& p, vector<PointLight>& pointLight, vector<SpotLight>& spotLight)
+//{
+//	float lightFlux = 0;
+//
+//	//livingFloor[0] = Tvector3<float>(-5.25, -3.50, table_height);
+//	//livingFloor[1] = Tvector3<float>(-5.25, 3.50, table_height);
+//	//livingFloor[2] = Tvector3<float>(5.25, 3.50, table_height);
+//	//livingFloor[3] = Tvector3<float>(5.25, -3.50, table_height);
+//
+//	//if (p.x<-5.250001 || p.x > 5.250001 || p.y<-3.50001 || p.y>3.50001){
+//	//	return 0;
+//	//}
+//	if (p.x < livingFloor[0].x /*- 0.0001*/ || p.x > livingFloor[3].x /*+ 0.0001*/ || p.y < livingFloor[0].y /*- 0.0001*/ || p.y > livingFloor[1].y /*+ 0.0001*/){
+//		return 0;
+//	}
+//
+//	//pointLightのときの光束
+//	for (int k = 0; k < pointLight.size(); k++){
+//		Tvector3<float> lightPosition = pointLight[k].getPosition() / 100.0;
+//		Tvector3<float> dif_living = p - lightPosition;
+//		float r2_living = dif_living.lengthSquared();
+//		dif_living = dif_living.normalize();
+//		float co_living = dif_living.dot(Tvector3<float>(0.0, 0.0, -1.0));
+//		lightFlux += pointLight[k].getLuminosity()*co_living / r2_living;
+//	}
+//	//spotLightのときの光束
+//	for (int k = 0; k < spotLight.size(); k++){
+//		Tvector3<float> lightPosition = spotLight[k].getPosition() / 100.0;
+//		Tvector3<float> dif_living = p - lightPosition;
+//		float r2_living = dif_living.lengthSquared();
+//		float co_living = dif_living.normalize().dot(Tvector3<float>(0.0, 0.0, -1.0));
+//		for (int i = 0; i < spotLight[k].getDirectivity(); i++){
+//			co_living *= co_living;
+//		}
+//		lightFlux += spotLight[k].getLuminosity()*co_living / r2_living;
+//	}
+//	
+//	//return lightFlux;
+//	return 1;
+//
+//}
+//
+////テーブルを作成
+//void makeLightFluxTable(vector<vector<float>>& FluxTable, float table_height, vector<PointLight>& pointLight, vector<SpotLight>& spotLight)
+//{
+//	//living_heightは100で割ったメートル単位の値を入れてるよ
+//
+//	livingFloor.resize(4);
+//
+//	livingFloor[0] = Tvector3<float>(-6.55, -4.7, table_height);
+//	livingFloor[1] = Tvector3<float>(-6.55, 4.7, table_height);
+//	livingFloor[2] = Tvector3<float>(6.55, 4.7, table_height);
+//	livingFloor[3] = Tvector3<float>(6.55, -4.7, table_height);
+//
+//	//回転のメッシュの細かさ
+//	float zrot;
+//	float zrot_mesh = 720 / (float)zrot_size;
+//
+//	FluxTable.resize(zrot_size);
+//
+//	vector<Tvector3<float>> boundingTemp,boundingFloor;
+//	boundingTemp.resize(4); boundingFloor.resize(4);
+//
+//	//for (int i = 0; i < 4; i++){
+//	//	cout << livingFloor[i] << ",";
+//	//}
+//	//cout << endl;
+//
+//
+//	std::cout << "テーブル作成中。。。" << endl;
+//	for (int z_mesh_k = 0; z_mesh_k < zrot_size; z_mesh_k++){
+//		FluxTable[z_mesh_k].resize(mesh_size*mesh_size);
+//		zrot = -360 + zrot_mesh*z_mesh_k;
+//		zrot = TO_RAD(zrot);
+//		float x_max=INT_MIN, x_min=INT_MAX, y_max=INT_MIN, y_min=INT_MAX;
+//		for (int i = 0; i < 4; i++){
+//			boundingTemp[i].x = cos(-zrot)*livingFloor[i].x - sin(-zrot)*livingFloor[i].y;
+//			boundingTemp[i].y = sin(-zrot)*livingFloor[i].x + cos(-zrot)*livingFloor[i].y;
+//			boundingTemp[i].z = livingFloor[i].z;
+//		}
+//		
+//		for (int i = 0; i < 4; i++){
+//			if (x_max < boundingTemp[i].x){ x_max = boundingTemp[i].x; }
+//			if (x_min > boundingTemp[i].x){ x_min = boundingTemp[i].x; }
+//			if (y_max < boundingTemp[i].y){	y_max = boundingTemp[i].y; }
+//			if (y_min > boundingTemp[i].y){	y_min = boundingTemp[i].y; }
+//		}	
+//
+//		boundingTemp[0] = Tvector3<float>(x_min, y_max, table_height);
+//		boundingTemp[1] = Tvector3<float>(x_max, y_max, table_height);
+//		boundingTemp[2] = Tvector3<float>(x_max, y_min, table_height);
+//		boundingTemp[3] = Tvector3<float>(x_min, y_min, table_height);
+//
+//		for (int i = 0; i < 4; i++){
+//			boundingFloor[i].x = cos(zrot)*boundingTemp[i].x - sin(zrot)*boundingTemp[i].y;
+//			boundingFloor[i].y = sin(zrot)*boundingTemp[i].x + cos(zrot)*boundingTemp[i].y;
+//			boundingFloor[i].z = boundingTemp[i].z;
+//		}
+//		
+//		//boundingFloorの横と縦
+//		float height = (boundingFloor[0] - boundingFloor[1]).length();
+//		float width = (boundingFloor[0] - boundingFloor[3]).length();
+//		
+//		//mesh幅
+//		float mesh_height = height / (float)mesh_size;
+//		float mesh_width = width / (float)mesh_size;
+//
+//		Tvector3<float> p0p1 = boundingFloor[1] - boundingFloor[0];
+//		Tvector3<float> p0p3 = boundingFloor[3] - boundingFloor[0];
+//
+//		for (int j = 0; j < mesh_size; j++){
+//			Tvector3<float> p = boundingFloor[0] + (0 * mesh_height / height)*p0p1 + (j*mesh_width / width)*p0p3;
+//			FluxTable[z_mesh_k][j*mesh_size + 0] = pLightFlux_ij(p,pointLight,spotLight)*mesh_height*mesh_width;
+//			for (int i = 1; i < mesh_size; i++){
+//				p = boundingFloor[0] + (i*mesh_height / height)*p0p1 + (j*mesh_width / width)*p0p3;
+//				FluxTable[z_mesh_k][j*mesh_size + i] = FluxTable[z_mesh_k][j*mesh_size + (i - 1)] 
+//														+ pLightFlux_ij(p,pointLight,spotLight)*mesh_height*mesh_width;
+//			}
+//		}
+//		for (int i = 0; i < mesh_size; i++){
+//			for (int j = 1; j < mesh_size; j++){
+//				FluxTable[z_mesh_k][j*mesh_size + i] += FluxTable[z_mesh_k][(j - 1)*mesh_size + i];
+//			}
+//		}
+//	}
+//	std::cout << "テーブル完了" << endl;
+//}
+//
+//float calcAverageIlluminance(vector<vector<float>>& fluxTable, float table_height,vector<PointLight>& pointLight,vector<SpotLight>& spotLight,Furniture& objects)
+//{
+//
+//	//livingFloor[0] = Tvector3<float>(-5.25, -3.50, table_height);
+//	//livingFloor[1] = Tvector3<float>(-5.25, 3.50, table_height);
+//	//livingFloor[2] = Tvector3<float>(5.25, 3.50, table_height);
+//	//livingFloor[3] = Tvector3<float>(5.25, -3.50, table_height);
+//
+//	livingFloor[0] = Tvector3<float>(-6.55, -4.7, table_height);
+//	livingFloor[1] = Tvector3<float>(-6.55, 4.7, table_height);
+//	livingFloor[2] = Tvector3<float>(6.55, 4.7, table_height);
+//	livingFloor[3] = Tvector3<float>(6.55, -4.7, table_height);
+//
+//
+//	//回転のメッシュの細かさ
+//	float zrot_mesh = 720 / (float)zrot_size;
+//	float max_zrot, min_zrot, x_max = INT_MIN, x_min = INT_MAX, y_max = INT_MIN, y_min = INT_MAX;
+//	int i_max, i_min;
+//	vector<Tvector3<float>> maxLivingFloor, minLivingFloor, maxBoundingTemp, minBoundingTemp, table, tableTemp, maxTable, minTable;
+//	maxLivingFloor.resize(4); minLivingFloor.resize(4); maxBoundingTemp.resize(4); minBoundingTemp.resize(4); table.resize(4); tableTemp.resize(4); maxTable.resize(4); minTable.resize(4);
+//
+//	//testでlivingTableの座標を考える。
+//	table[0] = Tvector3<float>( objects.obj[4].getMinimumPoint().x/100.0, objects.obj[4].getMaximumPoint().y/100.0, table_height);
+//	table[1] = Tvector3<float>( objects.obj[4].getMaximumPoint().x/100.0, objects.obj[4].getMaximumPoint().y/100.0, table_height);
+//	table[2] = Tvector3<float>( objects.obj[4].getMaximumPoint().x/100.0, objects.obj[4].getMinimumPoint().y/100.0, table_height);
+//	table[3] = Tvector3<float>( objects.obj[4].getMinimumPoint().x/100.0, objects.obj[4].getMinimumPoint().y/100.0, table_height);
+//
+//	//std::cout << "tableの面積 = " << (objects.obj[4].getMaximumPoint().x - objects.obj[4].getMinimumPoint().x)*(objects.obj[4].getMaximumPoint().y - objects.obj[4].getMinimumPoint().y) / 10000.0 << endl;
+//
+//	//testでlivingTableの回転を考える
+//	float zrot = objects.zrot[4];
+//	std::cout << "zrot(moto) = " << zrot << endl;
+//	for (int i = 0; i < 4; i++){ livingFloor[i].z = table_height; }
+//	//小数点(decinal)
+//	float decinal = zrot - (int)zrot;
+//	if (zrot < 0){
+//		zrot = -zrot; zrot = (int)zrot % 360; zrot = -zrot;	zrot = zrot + decinal;
+//	}
+//	else{
+//		zrot = (int)zrot % 360;	zrot = zrot + decinal;
+//	}
+//	std::cout << "zrot (-360～360) = " << zrot << endl;
+//	zrot = TO_RAD(zrot);
+//
+//	for (int i = 0; i < 4; i++){
+//		tableTemp[i].x = cos(0)*table[i].x - sin(0)*table[i].y;
+//		tableTemp[i].y = sin(0)*table[i].x + cos(0)*table[i].y;
+//		tableTemp[i].z = table[i].z;
+//	}
+//	for (int i = 0; i < 4; i++){ table[i] = tableTemp[i] + objects.trans[4] / 100.0; }
+//	
+//	zrot = TO_DEG(zrot);
+//	for (int i = 0; i < zrot_size; i++){
+//		max_zrot = -360 + i*zrot_mesh;
+//		min_zrot = -360 + (i - 1)*zrot_mesh;
+//		if (zrot < max_zrot && zrot > min_zrot) { i_max = i; i_min = i - 1; break; }
+//	}
+//	std::cout << "max_zrot = " << max_zrot << endl;
+//	std::cout << "min_zrot = " << min_zrot << endl;
+//	float gamma = zrot - min_zrot;
+//	cout << "gamma = " << gamma << endl;
+//
+//	//system("PAUSE");
+//	max_zrot = TO_RAD(max_zrot);
+//	min_zrot = TO_RAD(min_zrot);
+//	//system("PAUSE");
+//
+//	for (int i = 0; i < 4; i++){
+//		maxBoundingTemp[i].x = cos(-max_zrot)*livingFloor[i].x - sin(-max_zrot)*livingFloor[i].y;
+//		maxBoundingTemp[i].y = sin(-max_zrot)*livingFloor[i].x + cos(-max_zrot)*livingFloor[i].y;
+//		maxBoundingTemp[i].z = livingFloor[i].z;
+//
+//		minBoundingTemp[i].x = cos(-min_zrot)*livingFloor[i].x - sin(-min_zrot)*livingFloor[i].y;
+//		minBoundingTemp[i].y = sin(-min_zrot)*livingFloor[i].x + cos(-min_zrot)*livingFloor[i].y;
+//		minBoundingTemp[i].z = livingFloor[i].z;
+//	}
+//	for (int i = 0; i < 4; i++){
+//		if (x_max < maxBoundingTemp[i].x){ x_max = maxBoundingTemp[i].x; }
+//		if (x_min > maxBoundingTemp[i].x){ x_min = maxBoundingTemp[i].x; }
+//		if (y_max < maxBoundingTemp[i].y){ y_max = maxBoundingTemp[i].y; }
+//		if (y_min > maxBoundingTemp[i].y){ y_min = maxBoundingTemp[i].y; }
+//	}
+//	maxLivingFloor[0] = Tvector3<float>(x_min, y_max, table_height);
+//	maxLivingFloor[1] = Tvector3<float>(x_max, y_max, table_height);
+//	maxLivingFloor[2] = Tvector3<float>(x_max, y_min, table_height);
+//	maxLivingFloor[3] = Tvector3<float>(x_min, y_min, table_height);
+//
+//	x_max = INT_MIN; x_min = INT_MAX; y_max = INT_MIN; y_min = INT_MAX;
+//	for (int i = 0; i < 4; i++){
+//		if (x_max < minBoundingTemp[i].x){ x_max = minBoundingTemp[i].x; }
+//		if (x_min > minBoundingTemp[i].x){ x_min = minBoundingTemp[i].x; }
+//		if (y_max < minBoundingTemp[i].y){ y_max = minBoundingTemp[i].y; }
+//		if (y_min > minBoundingTemp[i].y){ y_min = minBoundingTemp[i].y; }
+//	}
+//	minLivingFloor[0] = Tvector3<float>(x_min, y_max, table_height);
+//	minLivingFloor[1] = Tvector3<float>(x_max, y_max, table_height);
+//	minLivingFloor[2] = Tvector3<float>(x_max, y_min, table_height);
+//	minLivingFloor[3] = Tvector3<float>(x_min, y_min, table_height);
+//
+//	//注Heightが横、widthが縦になった
+//	float maxHeightMesh = (maxLivingFloor[0] - maxLivingFloor[1]).length() / (float)mesh_size;
+//	float maxWidthMesh = (maxLivingFloor[0] - maxLivingFloor[3]).length() / (float)mesh_size;
+//
+//	float minHeightMesh = (minLivingFloor[0] - minLivingFloor[1]).length() / (float)mesh_size;
+//	float minWidthMesh = (minLivingFloor[0] - minLivingFloor[3]).length() / (float)mesh_size;
+//
+//	//こっからおかしいと思う
+//	//改めてFloor[0]を原点にした座標系を考える
+//	vector<Tvector3<float>> maxTempLivingFloor, minTempLivingFloor;
+//	maxTempLivingFloor.resize(4); minTempLivingFloor.resize(4);
+//	for (int i = 0; i < 4; i++){
+//		maxTable[i] = table[i] - maxLivingFloor[0];
+//		maxTempLivingFloor[i] = maxLivingFloor[i] - maxLivingFloor[0];
+//		//cout << maxTable[i] << " | ";
+//		//cout << maxTempLivingFloor[i] << endl;
+//
+//		minTable[i] = table[i] - minLivingFloor[0];
+//		minTempLivingFloor[i] = minLivingFloor[i] - minLivingFloor[0];
+//	}
+//
+//	vector<vector<Tvector2<int>>> max_point, min_point;
+//	max_point.resize(4); min_point.resize(4);
+//
+//	//メッシュの最大値はmesh_size( = 15 )になるはずことに注意
+//	//cout << "max_point = " << endl;
+//	for (int i = 0; i < 4; i++){
+//		max_point[i].resize(4);
+//		max_point[i][0].x = abs((int)(maxTable[i].x / maxHeightMesh)) ;
+//		max_point[i][0].y = abs((int)(maxTable[i].y / maxWidthMesh)) ;
+//		max_point[i][1].x = max_point[i][0].x + 1;
+//		max_point[i][1].y = max_point[i][0].y;
+//		max_point[i][2].x = max_point[i][0].x + 1;
+//		max_point[i][2].y = max_point[i][0].y + 1;
+//		max_point[i][3].x = max_point[i][0].x;
+//		max_point[i][3].y = max_point[i][0].y + 1;
+//		//for (int j = 0; j < 4; j++){
+//		//	//std::cout << "[" << i << "," << j << "] = ";
+//		//	std::cout << max_point[i][j] << " ";
+//		////}
+//		//std::cout << endl;
+//
+//		min_point[i].resize(4);
+//		min_point[i][0].x = abs((int)(minTable[i].x / minHeightMesh));
+//		min_point[i][0].y = abs((int)(minTable[i].y / minWidthMesh));
+//		min_point[i][1].x = min_point[i][0].x + 1;
+//		min_point[i][1].y = min_point[i][0].y;
+//		min_point[i][2].x = min_point[i][0].x + 1;
+//		min_point[i][2].y = min_point[i][0].y + 1;
+//		min_point[i][3].x = min_point[i][0].x;
+//		min_point[i][3].y = min_point[i][0].y + 1;
+//	}
+//	//cout << "............." << endl;
+//	//cout << "min_point = " << endl;
+//	//for (int i = 0; i < 4; i++){
+//	//	for (int j = 0; j < 4; j++){
+//	//		//std::cout << "[" << i << "," << j << "] = ";
+//	//		std::cout << min_point[i][j] << " ";
+//	//	}
+//	//	std::cout << endl ;
+//	//}
+//	//cout << "................" << endl;
+//
+//
+//	////線形補間します(Linear Interpolation)
+//	//cout << "table(0),zmax = " << calcTableArea(fluxTable, i_max, 0, max_point) << endl;
+//	//cout << "table(1),zmax = " << calcTableArea(fluxTable, i_max, 1, max_point) << endl;
+//	//cout << "table(2),zmax = " << calcTableArea(fluxTable, i_max, 2, max_point) << endl;
+//	//cout << "table(3),zmax = " << calcTableArea(fluxTable, i_max, 3, max_point) << endl;
+//	//cout << "===================================" << endl;
+//
+//	//線形補間前で考えてみるよ（机の面積は大体3.44になるはず）
+//	//cout << "fluxTable = " << fluxTable[i_max][max_point[0][0].y*mesh_size + max_point[0][0].x] << endl;
+//	//cout << "fluxTable = " << fluxTable[i_max][max_point[1][0].y*mesh_size + max_point[1][0].x] << endl;
+//	//cout << "fluxTable = " << fluxTable[i_max][max_point[2][0].y*mesh_size + max_point[2][0].x] << endl;
+//	//cout << "fluxTable = " << fluxTable[i_max][max_point[3][0].y*mesh_size + max_point[3][0].x] << endl;
+//	//float testarea =
+//	//	fluxTable[i_max][max_point[0][0].y*mesh_size + max_point[0][0].x]
+//	//	- fluxTable[i_max][max_point[1][0].y*mesh_size + max_point[1][0].x]
+//	//	+ fluxTable[i_max][max_point[2][0].y*mesh_size + max_point[2][0].x]
+//	//	- fluxTable[i_max][max_point[3][0].y*mesh_size + max_point[3][0].x];
+//	//std::cout << "線形補完する前だよ　=　" << testarea << endl;
+//	//std::cout << "..............." << endl;
+//
+//	//大体いい感じが出るのに時々変なマイナスとか出てくる。。。
+//	//max_pointとかmin_pointとかのチェックをすべし。
+//	float max_interpolationArea;
+//	max_interpolationArea =
+//		linerInterpolationTable(fluxTable, i_max, 0, maxTable, maxHeightMesh, maxWidthMesh, max_point)
+//		- linerInterpolationTable(fluxTable, i_max, 1, maxTable, maxHeightMesh, maxWidthMesh, max_point)
+//		+ linerInterpolationTable(fluxTable, i_max, 2, maxTable, maxHeightMesh, maxWidthMesh, max_point)
+//		- linerInterpolationTable(fluxTable, i_max, 3, maxTable, maxHeightMesh, maxWidthMesh, max_point);
+//	std::cout << "z_max:線形補間したよ = " << max_interpolationArea << endl;
+//	if (max_interpolationArea < 2.5){
+//		for (int i = 0; i < 4; i++){
+//			for (int j = 0; j < 4; j++){
+//				cout << max_point[i][j] << " , ";  
+//			}
+//			cout << " || " << linerInterpolationTable(fluxTable, i_max, i, maxTable, maxHeightMesh, maxWidthMesh, max_point) << endl;
+//		}
+//		//std::cout << "zrot (-360～360) = " << TO_DEG(zrot) << endl;
+//		//std::cout << "max_zrot = " << TO_DEG(max_zrot) << endl;
+//		//std::cout << "min_zrot = " << TO_DEG(min_zrot) << endl;
+//		cout << "i_max = " << i_max << endl;
+//		saveImage(fluxTable[i_max],"maxDebug.bmp");
+//		system("PAUSE");
+//	}
+//	float min_interpolationArea;
+//	min_interpolationArea =
+//		linerInterpolationTable(fluxTable, i_min, 0, minTable, minHeightMesh, minWidthMesh, min_point)
+//		- linerInterpolationTable(fluxTable, i_min, 1, minTable, minHeightMesh, minWidthMesh, min_point)
+//		+ linerInterpolationTable(fluxTable, i_min, 2, minTable, minHeightMesh, minWidthMesh, min_point)
+//		- linerInterpolationTable(fluxTable, i_min, 3, minTable, minHeightMesh, minWidthMesh, min_point);
+//	std::cout << "z_min:線形補間したよ = " << min_interpolationArea << endl;
+//	if (min_interpolationArea < 2.5){
+//		//z_minのときmin_pointがなぜか200以上が出てる。おかしい。
+//		cout << "min_point = " << endl;
+//		for (int i = 0; i < 4; i++){
+//			for (int j = 0; j < 4; j++){
+//				cout << min_point[i][j] << ",";
+//			}
+//			cout << " || " << linerInterpolationTable(fluxTable, i_min, i, minTable, minHeightMesh, minWidthMesh, min_point) << endl;
+//		}
+//		//std::cout << "zrot (-360～360) = " << TO_DEG(zrot) << endl;
+//		//std::cout << "max_zrot = " << TO_DEG(max_zrot) << endl;
+//		//std::cout << "min_zrot = " << TO_DEG(min_zrot) << endl;
+//		cout << "i_min = " << i_min << endl;
+//		saveImage(fluxTable[i_min], "minDebug.bmp");
+//		system("PAUSE");
+//	}
+//	float all_interpolationArea ;
+//	all_interpolationArea = gamma*max_interpolationArea + (1 - gamma)*min_interpolationArea;
+//	std::cout << "全体線形補間したよ = " << all_interpolationArea << endl;
+//	std::cout << "================================" << endl;
+//	//system("PAUSE");
+//
+//	return 0;
+//}
+////(注)point[机の頂点][机の頂点の周りの頂点]
+////(ex)point[0][(0～3)]
+////	（０）・    　・（１）
+////　　　　　　[0]　　　　　　　　　 [1]
+////　　　　　　○ーーーーーーーーーー○
+////　　　　　　｜                    ｜
+////　（３）・　｜　・（２）　　　　　｜　
+////　　　　　　｜　　　　　　　　　　｜
+////　　　　　　｜　　　　　　　　　　｜
+////　　　　　　｜　　　　　　　　　　｜
+////　　　　　　｜　　　　　　　　　　｜
+////　　　　　　｜　　　　　　　　　　｜
+////　　　　　　○ーーーーーーーーーー○
+////            [3]                   [2]
+//float calcTableArea(vector<vector<float>>& fluxTable, int i_z, int i, vector<vector<Tvector2<int>>>& point)
+//{
+//	float area;
+//	area =
+//		  fluxTable[i_z][point[2][i].y*mesh_size + point[2][i].x]
+//		+ fluxTable[i_z][point[0][i].y*mesh_size + point[0][i].x]
+//		- fluxTable[i_z][point[1][i].y*mesh_size + point[1][i].x]
+//		- fluxTable[i_z][point[3][i].y*mesh_size + point[3][i].x];
+//	return area;
+//}
+//
+//float linerInterpolationTable(vector<vector<float>>& fluxTable, int i_z, int i,vector<Tvector3<float>>& tablePoint, float heightMesh, float widthMesh, vector<vector<Tvector2<int>>>& point)
+//{	
+//	float alpha, beta;
+//	alpha = abs(tablePoint[i].x / heightMesh) - abs((int)(tablePoint[i].x / heightMesh));
+//	beta = abs(tablePoint[i].y / widthMesh) - abs((int)(tablePoint[i].y / widthMesh));
+//	//cout << tablePoint[i].x / heightMesh << "||" << abs((int)tablePoint[i].y / widthMesh) << endl;
+//	//cout << "alpha = " << alpha << endl;
+//	//cout << "beta  = " << beta << endl;
+//	//cout << "-----------------------" << endl;
+//
+//	if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1){
+//		cout << "alpha = " << alpha << endl;
+//		cout << "beta  = " << beta << endl;
+//		system("PAUSE");
+//	}
+//
+//	if (i_z >= 720){
+//		i_z = 719;
+//	}
+//
+//	float linerTable;
+//	linerTable =
+//		  (1 - alpha)*(1 - beta)*fluxTable[i_z][point[i][0].y*mesh_size + point[i][0].x]
+//		+ alpha*(1 - beta)*fluxTable[i_z][point[i][1].y*mesh_size + point[i][1].x]
+//		+ alpha*beta*fluxTable[i_z][point[i][2].y*mesh_size + point[i][2].x]
+//		+ (1 - alpha)*beta*fluxTable[i_z][point[i][3].y*mesh_size + point[i][3].x];
+//
+//	//std::cout << "liner table = " << linerTable << endl;
+//	//cout << "==================" << endl;
+//
+//	return linerTable;
+//}
+
+//void randamLayout(char* filename)
+//{
+//	ofstream outputfile(filename);
+//	if (!outputfile){
+//		cerr << "ファイルオープン失敗" << endl;
+//		exit(1);
+//	}
+//	outputfile << objectNum + 1 << endl;
+//	outputfile << Wall[0].getMaximumPoint().x * 1.82 / 100.0 << " " << Wall[0].getMaximumPoint().y * 1.82 /100.0 << " "
+//		<< Wall[0].getMinimumPoint().x * 1.82 / 100.0 << " " << Wall[0].getMaximumPoint().y * 1.82 / 100.0 << " "
+//		<< Wall[0].getMinimumPoint().x * 1.82 / 100.0 << " " << Wall[0].getMinimumPoint().y * 1.82 / 100.0 << " "
+//		<< Wall[0].getMaximumPoint().x * 1.82 / 100.0 << " " << Wall[0].getMinimumPoint().y * 1.82 / 100.0 << " "
+//		<< (Wall[0].getMaximumPoint().z - Wall[0].getMinimumPoint().z) / 100.0 << " "
+//		<< WALLCOLOR.r << " " << WALLCOLOR.g << " " << WALLCOLOR.b << endl;
+//	for (int i = 0; i < objectNum; i++){
+//		vector <Tvector2<float>> pbox, pbox_temp; pbox.resize(4); pbox_temp.resize(4);
+//		pbox_temp[0] = Tvector2<float>(objects.obj[i].getMaximumPoint().x / 100.0, objects.obj[i].getMaximumPoint().y / 100.0);
+//		pbox_temp[1] = Tvector2<float>(objects.obj[i].getMinimumPoint().x / 100.0, objects.obj[i].getMaximumPoint().y / 100.0);
+//		pbox_temp[2] = Tvector2<float>(objects.obj[i].getMinimumPoint().x / 100.0, objects.obj[i].getMinimumPoint().y / 100.0);
+//		pbox_temp[3] = Tvector2<float>(objects.obj[i].getMaximumPoint().x / 100.0, objects.obj[i].getMinimumPoint().y / 100.0);
+//
+//		for (int j = 0; j < 4; j++){
+//			pbox[j].x = cos(TO_RAD(objects.zrot[i]))*pbox_temp[j].x - sin(TO_RAD(objects.zrot[i]))*pbox_temp[j].y + objects.trans[i].x / 100.0;
+//			pbox[j].y = sin(TO_RAD(objects.zrot[i]))*pbox_temp[j].x + cos(TO_RAD(objects.zrot[i]))*pbox_temp[j].y + objects.trans[i].y / 100.0;
+//		}
+//
+//		for (int k = 0; k < 4; k++){
+//			outputfile << pbox[k].x << " " << pbox[k].y << " ";
+//			//outputfile << "v " << pbox[k].x << " 0 " << pbox[k].y << endl; //objファイル出力用
+//
+//		}
+//		//outputfile << "f " << i * 4 +1 << " " << i * 4 + 1 + 1 << " ";//objファイル出力用
+//		//outputfile << i * 4 + 2 + 1 << " " << i * 4 + 3 +1 << endl;//objファイル出力用
+//		outputfile << (objects.obj[i].getMaximumPoint().z - objects.obj[i].getMinimumPoint().z) / 100.0 << " ";
+//		if (objects.objname[i] == "coffee_table" || objects.objname[i] == "living_table"){
+//			outputfile << TABLECOLOR.r << " " << TABLECOLOR.g << " " << TABLECOLOR.b << endl;
+//		}
+//		else if (objects.objname[i] == "living_chair"){
+//			outputfile << DININGCHAIRCOLOR.r << " " << DININGCHAIRCOLOR.g << " " << DININGCHAIRCOLOR.b << endl;
+//		}
+//		else{
+//			outputfile << SOFACOLOR.r << " " << SOFACOLOR.g << " " << SOFACOLOR.b << endl;
+//		}
+//			
+//	}
+//	outputfile.close();
+//}
+
+
+	//system("PAUSE");
+
+
+	//float zrot_mesh = 720 / (float)zrot_size;
+	//for (int z = 0; z < zrot_size; z++){
+	//	cout << "z = " << z << " = " << -360 + z*zrot_mesh << endl << "................." << endl;
+	//	for (int i = 0; i < mesh_size; i++){
+	//		for (int j = 0; j < mesh_size; j++){
+	//			cout << livingFluxTable[z][i*mesh_size + j] << " , ";
+	//		}
+	//		cout << endl;
+	//	}
+	//	cout << "--------------------" << endl;
+	//	cout << "一つ完成" << endl;
+	//	system("PAUSE");
+	//}
+	//system("PAUSE");
+
+	//int zrot = 9, maxx = 15, minx = 11, maxy = 11, miny = 7;
+
+	//cout << "livingFlux["<<zrot<<":zrot]["<<maxx<<":縦]["<<maxy<<":横] = " << livingFluxTable[zrot][maxy*mesh_size+maxx] << endl;
+	//cout << "livingFlux["<<zrot<<":zrot]["<<minx<<":縦]["<<miny<<":横] = " << livingFluxTable[zrot][miny*mesh_size+minx] << endl;
+	//cout << "livingFlux["<<zrot<<":zrot]["<<minx<<":縦]["<<maxy<<":横] = " << livingFluxTable[zrot][maxy*mesh_size+minx] << endl;
+	//cout << "livingFlux["<<zrot<<":zrot]["<<maxx<<":縦]["<<miny<<":横] = " << livingFluxTable[zrot][miny*mesh_size+maxx] << endl;
+	//float test = livingFluxTable[zrot][maxy*mesh_size+maxx] + livingFluxTable[zrot][miny*mesh_size+minx]
+	//	- livingFluxTable[zrot][maxy*mesh_size+minx] - livingFluxTable[zrot][miny*mesh_size+maxx];
+	//cout << "test = " << test << endl;
+	//cout << "////////////////////////////////" << endl;
+
+
+	//for (int i = 0; i < objectNum; i++){
+	//	glPushMatrix();
+	//	Tvector3<float> cen1 = minobjects.obj[i].getCenter();
+	//	//----authoring-------
+	//	authoring_befor(minobjects);
+	//	//-------------移動を含めたshade------------------
+	//	calcAllLightIntensity3(ApointLight, AparallelLight, AspotLight, minobjects);
+	//	//------------------------------------------------
+	//	glTranslatef(minobjects.trans[i].x, minobjects.trans[i].y, minobjects.trans[i].z);
+	//	glTranslatef(cen1.x, cen1.y, cen1.z);
+	//	glRotatef(minobjects.zrot[i], 0.0, 0.0, 1.0);
+	//	glTranslatef(-cen1.x, -cen1.y, -cen1.z);
+	//	minobjects.obj[i].draw();
+	//	glPopMatrix();
+
+	//	//-----要素をテキストに保存（mayaレンダリングのため）--
+	//	recordTotext(minobjects);
+	//	//-----------------------------------------------------
+
+	//	////影描写
+	//	//glPushMatrix();
+	//	//glTranslatef(0.0, 0.0, 1.0);
+	//	//glMultMatrixf(shadowMat);
+	//	//glTranslatef(minobjects.trans[i].x, minobjects.trans[i].y, minobjects.trans[i].z);
+	//	//glTranslatef(cen1.x, cen1.y, cen1.z);
+	//	//glRotatef(minobjects.zrot[i], 0.0, 0.0, 1.0);
+	//	//glTranslatef(-cen1.x, -cen1.y, -cen1.z);
+	//	//shadowobject.obj[i].draw();
+	//	//glPopMatrix();
+
+	//	////正面のベクトルのつもり
+	//  //GLdouble muki = 100;
+	//	//glBegin(GL_LINES);
+	//	//glColor3d(0.0, 1.0, 0.0);
+	//	//glVertex3d(minobjects.trans[i].x, minobjects.trans[i].y, minobjects.trans[i].z);
+	//	//glVertex3d(minobjects.trans[i].x - muki*sin(TO_RAD(minobjects.zrot[i])), minobjects.trans[i].y + muki*cos(TO_RAD(minobjects.zrot[i])), minobjects.trans[i].z);
+	//	//glEnd();
+	//}
+
+	////----------------------------------
+	//calcLightDistribution2(minobjects, ApointLight);
+	////----------------------------------
+
+	////floor
+	//glPushMatrix();
+	//glScalef(1.4, 1.4, 1.0);
+	//Floor.draw();
+	//glPopMatrix();
+
+	////wall
+	//glPushMatrix();
+	//glScalef(1.4, 1.4, 1.5);
+	//Wall.draw();
+	//glPopMatrix();
+
+
+
+	//////textureありの壁と床
+	////drawTexturedQuad(floorX, floorY);
+
+
+	////平行光源
+	//light.setDirection(Tvector3<float>(1, 1, 1).normalize());
+	//light.setAmbient(Tcolor3<float>(0.5, 0.5, 0.5));
+	//light.setColor(Tcolor3<float>(1.0, 1.0, 1.0));
+	//objects.obj.shadeObjects(light);
+	//minobjects.obj.shadeObjects(light);
+	//Floor.shadeObjects(light);
+	//Wall.shadeObjects(light);
+
+
+	////平均照度のときの照明計画
+	////いい感じ(重点,ベース)=(360,270)
+	////重点照明(100形)(SpotLight)	
+	////--------------------------いい感じが出た--------------------------------------------
+	//////左に強いバージョン
+	////spotLight.setAllParam(205.0, 55.0, 240.0, WHITE, 39000, 390, 0.0, 0.0, -1.0, 0.0, 1);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(205.0, -55.0, 240.0, WHITE, 39000, 390, 0.0, 0.0, -1.0, 0.0, 1);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(-200.0, 0.0, 240.0, WHITE, 36000, 360, 0.0, 0.0, -1.0, 0.0, 1);
+	////AspotLight.push_back(spotLight);
+
+	////右に強いバージョン
+	//spotLight.setAllParam(-205.0, 55.0, 240.0, WHITE, 39000, 390, 0.0, 0.0, -1.0, 0.0, 1);
+	//AspotLight.push_back(spotLight);
+	//spotLight.setAllParam(-205.0, -55.0, 240.0, WHITE, 39000, 390, 0.0, 0.0, -1.0, 0.0, 1);
+	//AspotLight.push_back(spotLight);
+	//spotLight.setAllParam(200.0, 0.0, 240.0, WHITE, 36000, 360, 0.0, 0.0, -1.0, 0.0, 1);
+	//AspotLight.push_back(spotLight);
+
+	//////中央に強いバージョン
+	////spotLight.setAllParam(20.0, 20.0, 240.0, WHITE, 23000, 230, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(20.0, -20.0, 240.0, WHITE, 23000, 230, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(-20.0, 20.0, 240.0, WHITE, 23000, 230, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+	////spotLight.setAllParam(-20.0, -20.0, 240.0, WHITE, 23000, 230, 0.0, 0.0, -1.0, 0.0, 2);
+	////AspotLight.push_back(spotLight);
+
+	////ベース照明(60形)(PointLight)
+	//pointLight.setAllParam(280.0, 170.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(280.0, -170.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(-280.0, 170.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(-280.0, -170.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(0.0, 0.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	////---------------------------------------------------------------------
+
+	////--------------------------トリッキーな場合--------------------------------------------
+	////右に強いバージョン
+	////spotLight.setAllParam(-205.0, -55.0, 240.0, WHITE, 39000, 390, 0.0, 0.0, -1.0, 0.0, 1);
+	////AspotLight.push_back(spotLight);
+	//spotLight.setAllParam(-205.0, -200.0, 240.0, WHITE, 39000, 390, 0.0, 0.0, -1.0, 0.0, 1);
+	//AspotLight.push_back(spotLight);
+	//spotLight.setAllParam(-200.0, 200.0, 240.0, WHITE, 36000, 360, 0.0, 0.0, -1.0, 0.0, 1);
+	//AspotLight.push_back(spotLight);
+
+	////ベース照明(60形)(PointLight)
+	//pointLight.setAllParam(-280.0, 170.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	//pointLight.setAllParam(-280.0, -170.0, 240.0, WHITE, 26000, 0.0, 260);
+	//ApointLight.push_back(pointLight);
+	////pointLight.setAllParam(-280.0, 170.0, 240.0, WHITE, 26000, 0.0, 260);
+	////ApointLight.push_back(pointLight);
+	////pointLight.setAllParam(-280.0, -170.0, 240.0, WHITE, 26000, 0.0, 260);
+	////ApointLight.push_back(pointLight);
+	////pointLight.setAllParam(0.0, 0.0, 240.0, WHITE, 26000, 0.0, 260);
+	////ApointLight.push_back(pointLight);
+	////------------------------------------
+
+
+	////右強め：いい感じ
+	//Tvector3<float> position1(-225.0, 55.0, 240.0);
+	//Tvector3<float> position2(-225.0, -55.0, 240.0);
+	//Tvector3<float> position3(220.0, 0.0, 240.0);
+	//int directivity = 2.0;
+	//float cd0 = 290, cd1 = 460;
+	//float bri0 = cd0 / kbri, bri1 = cd1 / kbri;
+
+	////ベース照明右強めいい感じ
+	//Tvector3<float> baseposition(280.0, 170.0, 240.0);
+	//float cd2 = 110;
+	//float bri2 = cd2 / kbri;
+

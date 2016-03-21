@@ -1,0 +1,2 @@
+obj/test/table09.obj
+coffee_table

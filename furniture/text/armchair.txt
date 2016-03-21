@@ -1,0 +1,2 @@
+obj/test/sofa21.obj
+armchair

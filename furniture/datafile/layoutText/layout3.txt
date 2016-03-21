@@ -1,0 +1,7 @@
+trans[armchair] = (0.0103578, 0.409368, 0)   zrot[0] = 360
+trans[sofa] = (1.82513, 1.43547, 0)   zrot[1] = 90.0897
+trans[coffee_table] = (0.0103578, 1.43547, 0)   zrot[2] = 90.0897
+trans[armchair] = (0.0103578, 2.46157, 0)   zrot[3] = 180
+trans[living_table] = (-3.03971, 0.089799, 0)   zrot[4] = 361.253
+trans[living_chair] = (-3.03971, 1.86573, 0)   zrot[5] = -540.068
+trans[living_chair] = (-3.03971, -1.68614, 0)   zrot[6] = 0.400989

@@ -1,0 +1,11 @@
+loopCount = 4595
+time = 2.136
+mincost = -147.713
+trans[armchair] = (38.4962, 40.9368, 0)   zrot[0] = 362.155
+trans[sofa] = (182.513, 200.872, 0)   zrot[1] = 90.0897
+trans[coffee_table] = (197.04, -103.094, 0)   zrot[2] = -179.892
+trans[armchair] = (-36.4247, 246.157, 0)   zrot[3] = -90.3571
+trans[living_table] = (-303.971, -11.9414, 0)   zrot[4] = 361.253
+trans[living_chair] = (-317.898, 186.573, 0)   zrot[5] = -540.068
+trans[living_chair] = (-216.469, -168.614, 0)   zrot[6] = 0.400989
+trans[tv] = (-0.00132704, -0.00132704, -0.00132704)   zrot[7] = -0.00132704
